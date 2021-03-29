@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: 'MAGGIC score risk calculator'
+  description: >-
+    The Meta-Analysis Global Group in Chronic Heart Failure (MAGGIC) Risk Calculator
+    assigns an integer score based on heart failure risk factors to predict mortality
+    at 1 and 3 years.
+  license:
+    name: GNU General Public License v3 (GPL-3)
+    url: >-
+      https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)#fulltext
+  contact:
+    name: Philip Barrison & the KGrid Team
+    email: kgrid-developers@umich.edu
+    url: 'http://kgrid.org'
+servers:
+  - url: /99999/pb4jh3tk9s/1.0
+    description: >-
+      For adult patients with heart failure and preserved Ejection Fraction (EF).
+tags:
+  - name: KO Endpoints
+    description: MAGGIC Risk Score Endpoints
+paths:
+  /getSixyearprobability:
+    post:
+      tags:
+        - KO Endpoints
+      description: MAGGIC.
+      operationId: MAGGICriskscore
+      requestBody:
+        description: inputs
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/output'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+components:
+  schemas:
+    input:
+      required:
+        - age
+      properties:
+        EF:
+          type: integer
+          example: 25
+        Age:
+          type: integer
+          example: 54
+        SBP:
+          type: integer
+          example: 140
+        BMI:
+          type: integer
+          example: 18
+        Creatinine:
+          type: integer
+          example: 200
+        NHYA:
+          type: integer
+          example: 4
+        Gender:
+          type: string
+          example: female
+        Smoker:
+          type: string
+          example: false
+        Diabetic:
+          type: string
+          example: false
+        COPD:
+          type: string
+          example: false
+        DateDiagnosed:
+          type: string
+          example: "April, 14, 2020"
+        BetaBlocker:
+          type: string
+          example: false
+        ACEiARB:
+          type: string
+          example: true
+    output:
+      required:
+        - result
+      properties:
+        result:
+          type: number
+          example: 2.44211
+        success:
+          type: integer
+          example: 1
+        errorMessage:
+          type: string
+    error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

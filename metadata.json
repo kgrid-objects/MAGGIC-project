@@ -1,0 +1,13 @@
+{
+  "@id": "/99999/pb4jh3tk9s/v1.0",
+  "@type":"koio:KnowledgeObject",
+  "identifier": "ark:/99999/pb4jh3tk9s/v1.0",
+  "version":"v1.0",
+  "title": "MAGGIC Risk Score Calculator",
+  "description":"A Heart Failiure Calculator",
+  "keywords":["Heart failure","MAGGIC"],
+  "hasServiceSpecification": "service.yaml",
+  "hasDeploymentSpecification": "deployment.yaml",
+  "hasPayload": "src/MAGGICcalc.js",
+  "@context" : ["http://kgrid.org/koio/contexts/knowledgeobject.jsonld" ]
+}
