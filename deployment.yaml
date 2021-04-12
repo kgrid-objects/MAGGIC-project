@@ -1,5 +1,5 @@
 /maggicRiskScore:
   post:
     engine: javascript
-    artifact: MAGGICcalc.js
+    artifact: src/MAGGICcalc.js
     function: maggicRiskScore

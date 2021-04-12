@@ -22,7 +22,7 @@ tags:
   - name: KO Endpoints
     description: MAGGIC Risk Score Endpoints
 paths:
-  /getSixyearprobability:
+  /maggicRiskScore:
     post:
       tags:
         - KO Endpoints
@@ -64,8 +64,8 @@ components:
           type: integer
           example: 140
         BMI:
-          type: integer
-          example: 18
+          type: number
+          example: 18.5
         Creatinine:
           type: integer
           example: 200
@@ -77,22 +77,22 @@ components:
           example: female
         Smoker:
           type: string
-          example: false
+          example: "false"
         Diabetic:
           type: string
-          example: false
+          example: "false"
         COPD:
           type: string
-          example: false
+          example: "false"
         DateDiagnosed:
           type: string
           example: "April, 14, 2020"
         BetaBlocker:
           type: string
-          example: false
+          example: "false"
         ACEiARB:
           type: string
-          example: true
+          example: "true"
     output:
       required:
         - result

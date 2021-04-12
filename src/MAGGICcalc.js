@@ -1,18 +1,18 @@
-var inputs = { //Sample object including all necessary data inputs to run MAGGIC
-  "EF": 25,
-  "Age": 34,
-  "SBP": 120,
-  "BMI": 28,
-  "Creatinine": 120, //input with units of micromoles/liter
-  "NYHA": 4,
-  "Gender": "female",
-  "Smoker": false,
-  "Diabetic": false,
-  "COPD": false,
-  "DateDiagnosed": "April, 14, 2001",
-  "BetaBlocker": false,
-  "ACEiARB": true,
-};
+//var inputs = { //Sample object including all necessary data inputs to run MAGGIC
+//  "EF": 25,
+//  "Age": 34,
+//  "SBP": 120,
+//  "BMI": 28,
+//  "Creatinine": 120, //input with units of micromoles/liter
+//  "NYHA": 4,
+//  "Gender": "female",
+//  "Smoker": false,
+//  "Diabetic": false,
+//  "COPD": false,
+//  "DateDiagnosed": "April, 14, 2001",
+//  "BetaBlocker": false,
+//  "ACEiARB": true,
+//};
 
 function maggicRiskScore(inputs) {
   var outputs = {};
@@ -259,4 +259,4 @@ function calculateRisk(inputs) {
     return results;
   }
 
-console.log(maggicRiskScore(inputs));
+//console.log(maggicRiskScore(inputs));
