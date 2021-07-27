@@ -17,7 +17,7 @@ info:
 servers:
   - url: /99999/pb4jh3tk9s/1.0
     description: >-
-      For adult patients with heart failure and preserved Ejection Fraction (EF).
+      For adult patients with heart failure with preserved or reduced Ejection Fraction (EF).
 tags:
   - name: KO Endpoints
     description: MAGGIC Risk Score Endpoints
