@@ -69,30 +69,30 @@ components:
         Creatinine:
           type: integer
           example: 200
-        NHYA:
+        NYHA:
           type: integer
           example: 4
         Gender:
           type: string
-          example: female
+          example: "female"
         Smoker:
-          type: string
-          example: "false"
+          type: boolean
+          example: false
         Diabetic:
-          type: string
-          example: "false"
+          type: boolean
+          example: false
         COPD:
-          type: string
-          example: "false"
+          type: boolean
+          example: false
         DateDiagnosed:
-          type: string
-          example: "April, 14, 2020"
+          type: number
+          example: 1.6
         BetaBlocker:
-          type: string
-          example: "false"
+          type: boolean
+          example: false
         ACEiARB:
-          type: string
-          example: "true"
+          type: boolean
+          example: true
     output:
       required:
         - result

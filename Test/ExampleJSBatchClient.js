@@ -66,14 +66,19 @@ csv_h.push( [l, h[i], bn, g].join('.') );
 } if (fs.existsSync('thank you/') === false) {
 fs.mkdirSync('thank you/');
 }
-}// API setup
+}
+
+// API setup
 var waitAPI = 1 + progress;// wait API before next sending row
 var retries = 0;// max 3 retries per API
 var API = "";// not selected by user yet
 /* step 3 done...
+
 The rest of the steps are linked together one by one.
+
 The next line of code will run step 4 until the last step.
 */
+
 selectAPI();// 3.5 ask user to select the preferred API
 function selectAPI() {
 if (API === "" || API === "again") {
@@ -112,7 +117,9 @@ selectAPI();// ask again if needed
 } else {// run step 4 to the end
 selectOrder();
 }
-}// step 4. select ordered rows returned
+}
+
+// step 4. select ordered rows returned
 function selectOrder() {
 if (random_order === "" || random_order === "again") {
 random_order = "";// in case again
@@ -148,7 +155,9 @@ fs.writeFileSync(output, csv_h.join() + '\r\n');
 csv_h = null;// headers no longer needed in memory
 findcsv();// run step 4 to the end
 }
-}// 4.5 find the user's csv
+}
+
+// 4.5 find the user's csv
 function findcsv() {
 var find_csv = [];
 var folder = fs.readdirSync("./");
@@ -158,7 +167,8 @@ if (folder[doc] !== input) {
 find_csv.push(folder[doc]);
 }
 }
-}// CSV files found
+}
+// CSV files found
 if (find_csv.length === 0) {// use demo.csv
 console.log("\n DEMO FILE:  ", input, "\n");
 } else if (find_csv.length === 1) {// use your CSV
@@ -170,7 +180,9 @@ console.log("\n Found more than two CSV files in current folder. \
 process.exit();
 }
 extract(input);
-}// 5. extract data from csv
+}
+
+// 5. extract data from csv
 function extract(csv) {
 var stream = fs.createReadStream(csv,{encoding: 'utf8'});
 var rl = readline.createInterface({input: stream});
@@ -182,7 +194,9 @@ csvtojson(line, read);// only runs after reading to the current line progress
 }
 }
 });
-}// 6. job 1
+}
+
+// 6. job 1
 function csvtojson(row, waitlist) {
 var column = row.split(",");
 if (column[0] !== "") {// skip empty rows at the beginning or before the end of the CSV
@@ -321,7 +335,9 @@ hold(schema, waitlist);// wait to send data
 POST(schema);// don't wait to send data
 }
 }
-}// 7. holding data optional to get ordered rows returned
+}
+
+// 7. holding data optional to get ordered rows returned
 function hold(data, position) {
 if (waitAPI === position) {// put data on hold
 POST(data);// ready to call API
@@ -330,7 +346,9 @@ setTimeout( function() {
 hold(data, position);
 },0);
 }
-}// 8. job 2, setup host: 0 = local KGrids API, 1 = online API
+}
+
+// 8. job 2, setup host: 0 = local KGrids API, 1 = online API
 function POST(data) {
 var host = ['http://localhost:8080/ipp/executive/process',
 'http://activator.kgrid.org/ipp/executive/process']
@@ -365,7 +383,9 @@ fs.writeFileSync("thank you/progress.txt", progress);
 console.log("\n Unknown Error ...", error.message, "\n ... Please try again later.");
 }
 });
-}// 9. job 3, convert json to csv
+}
+
+// 9. job 3, convert json to csv
 function jsontocsv(one) {
 var csv_c = [];// fill one row of csv columns output, append later
 csv_c.push( one.result.id );// next patient id
