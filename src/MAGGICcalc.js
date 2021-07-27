@@ -9,7 +9,7 @@
 //  "Smoker": false,
 //  "Diabetic": false,
 //  "COPD": false,
-//  "DateDiagnosed": "April, 14, 2001",
+//  "DateDiagnosed": 6.8, //Date diagnosed can either be provided as "year since diagnosis" (for retrospective use) or as the actual date of diagnosis (for prospective use)
 //  "BetaBlocker": false,
 //  "ACEiARB": true,
 //};
@@ -209,13 +209,21 @@ function calculateRisk(inputs) {
     }
 
   //Calculate diagnosis date score contribution
-    var dateDiagnosed = new Date(inputs.DateDiagnosed);
-    var dateToday = Date.now();
-    var timeSinceDiagnosis = (dateToday - dateDiagnosed)/(1000 * 60 * 60 * 24 * 365);
-    if (timeSinceDiagnosis <= 1.5) {
+  //If KO is being used retrospectively, determine the length of time it has been between the date of interest and the original diagnosis, prior to inputing data
+  //If KO is being used prospectively, use the date of diagnosis as the initial input
+    if (typeof inputs.DateDiagnosed === "number" && inputs.DateDiagnosed <= 1.5) {
       riskFactorOutputs.DateDiagnosed = 2;
-    } else {
+    } else if (typeof inputs.DateDiagnosed === "number" && inputs.DateDiagnosed > 1.5) {
       riskFactorOutputs.DateDiagnosed = 0;
+    } else {
+      var dateDiagnosed = new Date(inputs.DateDiagnosed);
+      var dateToday = Date.now();
+      var timeSinceDiagnosis = (dateToday - dateDiagnosed)/(1000 * 60 * 60 * 24 * 365);
+      if (timeSinceDiagnosis <= 1.5) {
+        riskFactorOutputs.DateDiagnosed = 2;
+      } else {
+        riskFactorOutputs.DateDiagnosed = 0;
+      }
     }
 
   //Calculate beta blocker score contribution
