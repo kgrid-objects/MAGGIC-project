@@ -133,7 +133,7 @@ ask.question("\n Also, is it okay if CSV rows are returned in random order? \
 \n\n Please enter 0 or 1:  ", function(answer) {
 if (answer === "0") {
 random_order = "yes";
-console.log("\n CSV rows will come back in random order.\
+console.log("\n  rows will come back in random order.\
 \n The batch processing may finish FASTER however the connection may be less stable.");
 } else if (answer === "1") {
 random_order = "no";

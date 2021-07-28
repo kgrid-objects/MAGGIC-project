@@ -1,5 +1,5 @@
 //1. filenames for input and outputs
-var input = "CompleteCases.csv"
+var input = ""
 var output = "CompleteCasesScored.csv"
 
 // 1.5 try load module: axios
@@ -29,108 +29,37 @@ var h_all = csv_h.length;
 var waitAPI = 1 + progress; //wait API befre next sending rows
 var retries = 0; // max 3 retries per API
 var API = "";// not selected by user yet
+var ask = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-//The rest of the code is linked together, one-by-One
-
-// 3.5 ask user to select the preferred API
-/*selectAPI();
-function selectAPI() {
-  if (API === "" || API === "again") {
-    API = "";// in case again
-    var localAPI = "Local API";
-    var onlineAPI = "Online API";
-    var ask = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    ask.question("\n Select your preference ... \
-    \n\n 0 -- " + localAPI + "\
-    \n 1 -- " + onlineAPI + "\
-    \n\n Please enter 0 or 1:  ", function(answer) {
-      if (answer === "0") {
-        API = 0;
-        console.log("\n Thank you. The", localAPI, "will be called first to process \
-        \n each row of data. If the", localAPI, "goes down, the", onlineAPI,
-        "\n will be called second and the batch process will be slightly slower.");
-      } else if (answer === "1") {
-        API = 1;
-        console.log("\n Thank you. The", onlineAPI, "will be called first to process \
-        \n each row of data. If the", onlineAPI, "goes down, the\n"
-        , localAPI, "(if available) will be called.");
-      } else {
-        API = "again";
-        console.log("\n Please try again. Enter 0 or 1. Do not enter zero or one.");
-      }
-      ask.close();
-    });
-    ask.on('close', function() {
-      while (API === "") {// wait for answer
-      }
-      selectAPI();// ask again if needed
-    });
-  } else {// run step 4 to the end
-    selectOrder();
-  }
-}
-
-// step 4. select ordered rows returned
-function selectOrder() {
-  if (random_order === "" || random_order === "again") {
-    random_order = "";// in case again
-    var ask = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    ask.question("\n Also, is it okay if CSV rows are returned in random order? \
-    \n\n 0 -- Yes\
-    \n 1 -- No\
-    \n\n Please enter 0 or 1:  ", function(answer) {
-      if (answer === "0") {
-        random_order = "yes";
-        console.log("\n CSV rows will come back in random order.\
-        \n The batch processing may finish FASTER however the connection may be less stable.");
-      } else if (answer === "1") {
-        random_order = "no";
-        console.log("\n CSV rows will not come back in random order.\
-        \n The batch processing may finish SLOWER; the connection may be more stable.");
-      } else {
-        random_order = "again";
-        console.log("\n Please try again. Enter 0 or 1. Do not enter zero or one.");
-      }
-      ask.close();
-    });
-    ask.on('close', function() {
-      while (random_order === "") {// wait for answer
-      }
-      selectOrder();// ask again if needed
-    });
-  } else {// next line adds created headers to csv
-    fs.writeFileSync(output, csv_h.join() + '\r\n');
-    csv_h = null;// headers no longer needed in memory
-    findcsv();// run step 4 to the end
-  }
-}
-*/
+//The rest of the code is linked together, one-by-one
 
 //Pul input csv files
 findcsv(); //calls the function to find the input csv file
 function findcsv() { //defines the function to find the input csv file
-  var find_csv = [];
-  var folder = fs.readdirSync("./");
+  var find_csv = []; //variable for an array holding the csv files found in the folder searched
+  var folder = fs.readdirSync("./Test/Inputs"); //Pulls input files from input director in the test folder ****************************************************
   for (var doc in folder) {
     if (require('path').extname(folder[doc]) === ".csv") {
-      if (folder[doc] !== input) {
-        find_csv.push(folder[doc]);
-      }
+      find_csv.push(folder[doc]); //Asigns any csv files in the Input folder to the find_csv array
     }
   }
-// CSV files found
-  if (find_csv.length === 0) {// use demo.csv
-    console.log("\n DEMO FILE:  ", input, "\n");
-  } else if (find_csv.length === 1) {// use your CSV
+  //CSV File found
+  if (find_csv.length === 1) { //If only a single file that matches the requested input is found, input is set equal to find_csv
     input = find_csv[0];
-    console.log("\n FOUND FILE:  ", input, "\n");
-  } else {
+    console.log("\nFOUND FILE: ", input, "\n");
+  } else if (find_csv.length === 0) { //If no files are found, notify user and reattempt
+    console.log("\nNO FILE FOUND");
+    ask.question("\nWould you like to try again? \n\n0 -- Retry \n1 -- Close Program", function(answer) {
+      if (answer === "0") {
+        findcsv();
+      } else {
+        process.exit();
+      }
+    })
+  } else { //if multiple inputs are available, notify user and end task
     console.log("\n Found more than two CSV files in current folder. \
     \n Please delete or move un-used CSV files ...");
     process.exit();
@@ -138,8 +67,9 @@ function findcsv() { //defines the function to find the input csv file
   extract(input);
 }
 
-// 5. extract data from csv
+//Extract data from csv
 function extract(csv) {
+  process.chdir('./Test/Inputs'); //change the process directory to the folder that the input is being pulled from in the prior code ***************
   var stream = fs.createReadStream(csv,{encoding: 'utf8'});
   var rl = readline.createInterface({input: stream});
   rl.on('line', function(line) {
@@ -152,10 +82,111 @@ function extract(csv) {
   });
 }
 
-//Job 1
+//Job 1 - convert the extracted csv data to a json form that can be inputed into the KO
 function csvtojson(row, waitlist) {
   var column = row.split(",");
-  if (column[0] !== "") {
-    var schema
-  }
+  var schema = {
+    "patient": {
+      "inputs": {}
+  }};
+  var spi = schema.patient.inputs;
+  //map KO keys to CSV_column values...
+  schema.patient["PatientID"] = column[0];
+  spi["EF"] = column[1];
+  spi["Age"] = column[2];
+  spi["SBP"] = column[3];
+  spi["BMI"] = column[4];
+  spi["Creatinine"] = column[5];
+  spi["NYHA"] = column[6];
+  spi["Gender"] = column[7];
+  spi["Smoker"] = column[8];
+  spi["Diabetic"] = column[9];
+  spi["COPD"] = column[10];
+  spi["BetaBloker"] = column[11];
+  spi["ACEiARB"] = column[12];
+  spi["DateDiagnosed"] = column[13];
+  //Post to KO
+  console.log(schema);
+  //Post(schema);
 }
+
+
+/*
+// 8. job 2, setup host: 0 = local KGrids API, 1 = online API
+function POST(data) {
+var host = ['http://localhost:8080/ipp/executive/process',
+'http://activator.kgrid.org/ipp/executive/process']
+axios.post(host[API], data)
+.then( function(response) {
+jsontocsv(response.data);
+if (random_order === "no") {
+waitAPI++;// move up waitlist
+}
+}).catch( function(error) {
+if (error.response || error.request) {
+// The request was made and the server responded with a status code that falls
+// out of the range of 2xx or The request was made but no response received
+if (retries < 6) {
+if (API === 1) {
+API = 0;
+} else {
+API = 1;
+}
+setTimeout( function() {
+POST(data);
+retries++;
+}, 2000);
+} else {
+fs.writeFileSync("thank you/progress.txt", progress);
+console.log("\n Server or connection issue. Please try again later.");
+process.exit();
+}
+} else {
+// Something happened in setting up the request that triggered an Error
+fs.writeFileSync("thank you/progress.txt", progress);
+console.log("\n Unknown Error ...", error.message, "\n ... Please try again later.");
+}
+});
+}
+
+// 9. job 3, convert json to csv
+function jsontocsv(one) {
+var csv_c = [];// fill one row of csv columns output, append later
+csv_c.push( one.result.id );// next patient id
+csv_c.push( one.result.lifeexpectancy.baseline );// next baseline
+var hi = 0;// keep track of header keys processed
+while (hi < h_all) {
+try {// access header keys
+var orl = one.result.lifeexpectancy[h[hi]];// not accessed: .result.rankedreclist
+// then add column data
+csv_c.push( orl[t][ns] );
+csv_c.push( orl[t][s] );
+csv_c.push( orl[t][g] );
+csv_c.push( orl[bn][ns] );
+csv_c.push( orl[bn][s] );
+csv_c.push( orl[bn][g] );
+} catch (err) {// no header key, no column data
+csv_c.push(".", ".", ".", ".", ".", ".");
+if (announce > 15) {// announce progress once in a while
+process.stdout.write(" Progress:  " + (100*progress/read).toFixed(0) +
+" % ... " + progress + "/" + read + " rows processed");
+process.stdout.cursorTo(0);
+announce = 0;
+retries = 0;
+}
+}// next header key
+hi++;
+}// append row to csv
+fs.appendFileSync(output,csv_c.join() + '\r\n');
+progress++;
+announce++;
+if (read === progress) {
+try {// remove file about row progress
+fs.unlinkSync("thank you/progress.txt");
+} catch {}// no file to remove, connection to API never lost
+process.stdout.clearLine(0);
+console.log(" Complete:  Processed batch of data ...", progress, "rows, not counting header row");
+fs.writeFileSync("thank you/done.txt", progress);
+}
+}
+*/
