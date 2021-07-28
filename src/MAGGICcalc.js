@@ -1,17 +1,17 @@
 //var inputs = { //Sample object including all necessary data inputs to run MAGGIC
-//  "EF": 25,
-//  "Age": 54,
-//  "SBP": 140,
-//  "BMI": 18.5,
-//  "Creatinine": 200, //input with units of micromoles/liter
+//  "EF": 55,
+//  "Age": 56,
+//  "SBP": 119,
+//  "BMI": 27,
+//  "Creatinine": 83, //input with units of micromoles/liter
 //  "NYHA": 4,
-//  "Gender": "female",
+//  "Gender": "male",
 //  "Smoker": false,
 //  "Diabetic": false,
 //  "COPD": false,
-//  "DateDiagnosed": 1.6, //Date diagnosed can either be provided as "year since diagnosis" (for retrospective use) or as the actual date of diagnosis (for prospective use)
+//  "DateDiagnosed": 2.3, //Date diagnosed can either be provided as "year since diagnosis" (for retrospective use) or as the actual date of diagnosis (for prospective use)
 //  "BetaBlocker": false,
-//  "ACEiARB": true,
+//  "ACEiARB": false,
 //};
 
 function maggicRiskScore(inputs) {

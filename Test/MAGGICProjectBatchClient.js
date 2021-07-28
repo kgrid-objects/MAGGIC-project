@@ -16,6 +16,7 @@ try {// check if axios module installed
 //1.75 load rest of modules: file system, readline
 var fs = require('fs'); //allows to work with file systems on the computer
 var readline = require('readline'); //provides model for reading data, one line at a time
+var axios = require('axios');
 
 //2. needed variables and create csv skeleton
 var read = -1;
@@ -91,102 +92,72 @@ function csvtojson(row, waitlist) {
   }};
   var spi = schema.patient.inputs;
   //map KO keys to CSV_column values...
+  var t = "TRUE";
   schema.patient["PatientID"] = column[0];
-  spi["EF"] = column[1];
-  spi["Age"] = column[2];
-  spi["SBP"] = column[3];
-  spi["BMI"] = column[4];
-  spi["Creatinine"] = column[5];
-  spi["NYHA"] = column[6];
+  spi["EF"] = Number(column[1]);
+  spi["Age"] = Number(column[2]);
+  spi["SBP"] = Number(column[3]);
+  spi["BMI"] = Number(column[4]);
+  spi["Creatinine"] = Number(column[5]);
+  spi["NYHA"] = Number(column[6]);
   spi["Gender"] = column[7];
-  spi["Smoker"] = column[8];
-  spi["Diabetic"] = column[9];
-  spi["COPD"] = column[10];
-  spi["BetaBloker"] = column[11];
-  spi["ACEiARB"] = column[12];
-  spi["DateDiagnosed"] = column[13];
+  spi["Smoker"] = (column[8] === t);
+  spi["Diabetic"] = (column[9] === t);
+  spi["COPD"] = (column[10] === t);
+  spi["DateDiagnosed"] = Number(column[13]);
+  spi["BetaBlocker"] = (column[11] === t);
+  spi["ACEiARB"] = (column[12] === t);
   //Post to KO
-  console.log(schema);
-  //Post(schema);
+  cleave(schema, waitlist);
 }
 
+//Split up data to retain pt ID's
+function cleave(schema, waitlist) {
+  var ids = schema.patient["PatientID"];
+  var data = schema.patient.inputs;
+  hold(data, waitlist)
+}
 
-/*
-// 8. job 2, setup host: 0 = local KGrids API, 1 = online API
+//hold data to get ordered rows returned
+function hold(data, position) {
+  if (waitAPI === position) {
+    POST(data);
+  } else {
+    setTimeout( function() {
+      hold(data, position);
+    }, 0);
+  }
+}
+
+//Setup host and pass data :
 function POST(data) {
-var host = ['http://localhost:8080/ipp/executive/process',
-'http://activator.kgrid.org/ipp/executive/process']
-axios.post(host[API], data)
-.then( function(response) {
-jsontocsv(response.data);
-if (random_order === "no") {
-waitAPI++;// move up waitlist
-}
-}).catch( function(error) {
-if (error.response || error.request) {
-// The request was made and the server responded with a status code that falls
-// out of the range of 2xx or The request was made but no response received
-if (retries < 6) {
-if (API === 1) {
-API = 0;
-} else {
-API = 1;
-}
-setTimeout( function() {
-POST(data);
-retries++;
-}, 2000);
-} else {
-fs.writeFileSync("thank you/progress.txt", progress);
-console.log("\n Server or connection issue. Please try again later.");
-process.exit();
-}
-} else {
-// Something happened in setting up the request that triggered an Error
-fs.writeFileSync("thank you/progress.txt", progress);
-console.log("\n Unknown Error ...", error.message, "\n ... Please try again later.");
-}
-});
-}
+  var data = JSON.stringify(data);
+  var config = {
+    method: 'post',
+    url: 'http://localhost:9090/99999/pb4jh3tk9s/1.0/maggicRiskScore',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    data : data
+    };
+    axios(config)
+    .then(function (response) {
+      jsontocsv(response.data);
+      waitAPI++;
+    })
+    .catch(function (error) {
+    console.log(error);
+    });
+  }
 
-// 9. job 3, convert json to csv
+
+////KO is spitting out appropriate results, now convert back in csv.
+
+//Convert json to csv
 function jsontocsv(one) {
-var csv_c = [];// fill one row of csv columns output, append later
-csv_c.push( one.result.id );// next patient id
-csv_c.push( one.result.lifeexpectancy.baseline );// next baseline
-var hi = 0;// keep track of header keys processed
-while (hi < h_all) {
-try {// access header keys
-var orl = one.result.lifeexpectancy[h[hi]];// not accessed: .result.rankedreclist
-// then add column data
-csv_c.push( orl[t][ns] );
-csv_c.push( orl[t][s] );
-csv_c.push( orl[t][g] );
-csv_c.push( orl[bn][ns] );
-csv_c.push( orl[bn][s] );
-csv_c.push( orl[bn][g] );
-} catch (err) {// no header key, no column data
-csv_c.push(".", ".", ".", ".", ".", ".");
-if (announce > 15) {// announce progress once in a while
-process.stdout.write(" Progress:  " + (100*progress/read).toFixed(0) +
-" % ... " + progress + "/" + read + " rows processed");
-process.stdout.cursorTo(0);
-announce = 0;
-retries = 0;
+  var one = JSON.stringify(one);
+  var csv_c = [];
+  csv_c.push(one);
+  console.log(one);
 }
-}// next header key
-hi++;
-}// append row to csv
-fs.appendFileSync(output,csv_c.join() + '\r\n');
-progress++;
-announce++;
-if (read === progress) {
-try {// remove file about row progress
-fs.unlinkSync("thank you/progress.txt");
-} catch {}// no file to remove, connection to API never lost
-process.stdout.clearLine(0);
-console.log(" Complete:  Processed batch of data ...", progress, "rows, not counting header row");
-fs.writeFileSync("thank you/done.txt", progress);
-}
-}
-*/
