@@ -1,8 +1,8 @@
-//1. filenames for input and outputs
+//filenames for input and outputs
 var input = ""
 var output = "CompleteCasesScored.csv" //Update based on intended output************
 
-// 1.5 try load module: axios
+//try load module: axios
 try {// check if axios module installed
   var axios = require('axios');
 } catch {// first run message
@@ -13,22 +13,22 @@ try {// check if axios module installed
   process.exit();
 }
 
-//1.75 load rest of modules: file system, readline
+//load rest of modules: file system, readline
 var fs = require('fs'); //allows to work with file systems on the computer
 var readline = require('readline'); //provides model for reading data, one line at a time
 var axios = require('axios');
 
-//2. needed variables and create csv skeleton
+//needed variables and create csv skeleton
 var read = -1;
 var progress = 0;
 var announce = 0;
 var random_order = "";
 var csv_h = ['PatientID', 'IntegerRiskScore', '1YearMortalityRisk', '3YearMortalityRisk'];
 var h_all = csv_h.length;
-process.chdir('./Test/Outputs') //****************************************************** Check
+process.chdir('Outputs') //****************************************************** Check
 fs.writeFileSync(output, csv_h.join() + '\r\n');
 
-//API Setup <- Is this necessary?
+//API Setup
 var waitAPI = 1 + progress; //wait API befre next sending rows
 var retries = 0; // max 3 retries per API
 var API = "";// not selected by user yet
@@ -39,12 +39,12 @@ var ask = readline.createInterface({
 
 //The rest of the code is linked together, one-by-one
 
-//Pul input csv files
+//Pull input csv files
 findcsv(); //calls the function to find the input csv file
 function findcsv() { //defines the function to find the input csv file
   var find_csv = []; //variable for an array holding the csv files found in the folder searched
   process.chdir('../'); //*****************************************************************************check
-  var folder = fs.readdirSync("./Inputs"); //Pulls input files from input director in the test folder ****************************************************
+  var folder = fs.readdirSync("Inputs"); //Pulls input files from input director in the test folder ****************************************************
   for (var doc in folder) {
     if (require('path').extname(folder[doc]) === ".csv") {
       find_csv.push(folder[doc]); //Asigns any csv files in the Input folder to the find_csv array
@@ -73,7 +73,7 @@ function findcsv() { //defines the function to find the input csv file
 
 //Extract data from csv
 function extract(csv) {
-  process.chdir('./Inputs'); //change the process directory to the folder that the input is being pulled from in the prior code ***************
+  process.chdir('Inputs'); //change the process directory to the folder that the input is being pulled from in the prior code ***************
   var stream = fs.createReadStream(csv,{encoding: 'utf8'});
   var rl = readline.createInterface({input: stream});
   rl.on('line', function(line) {
@@ -169,6 +169,6 @@ function jsontocsv(one, ids) {
 
   //append row to csv
   process.chdir('../'); //******************************************check
-  process.chdir('./Outputs') //*************************************check
+  process.chdir('Outputs') //*************************************check
   fs.appendFileSync(output, csv_c.join() + '\r\n');
 }
