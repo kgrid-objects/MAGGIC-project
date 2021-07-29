@@ -9,7 +9,7 @@
 //  "Smoker": false,
 //  "Diabetic": false,
 //  "COPD": false,
-//  "DateDiagnosed": 2.3, //Date diagnosed can either be provided as "year since diagnosis" (for retrospective use) or as the actual date of diagnosis (for prospective use)
+//  "DateDiagnosed": 2.3, //Date diagnosed can either be provided as "year since diagnosis" (for retrospective use) or as the actual date of diagnosis (for prospective use). Depending on the intended use of the KO, service.yaml will need to be updated to reflect "string" or "number" inputs
 //  "BetaBlocker": false,
 //  "ACEiARB": false,
 //};
