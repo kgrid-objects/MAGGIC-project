@@ -1,6 +1,6 @@
 //1. filenames for input and outputs
 var input = ""
-var output = "CompleteCasesScored.csv"
+var output = "CompleteCasesScored.csv" //Update based on intended output************
 
 // 1.5 try load module: axios
 try {// check if axios module installed
@@ -25,6 +25,8 @@ var announce = 0;
 var random_order = "";
 var csv_h = ['PatientID', 'IntegerRiskScore', '1YearMortalityRisk', '3YearMortalityRisk'];
 var h_all = csv_h.length;
+process.chdir('./Test/Outputs') //****************************************************** Check
+fs.writeFileSync(output, csv_h.join() + '\r\n');
 
 //API Setup <- Is this necessary?
 var waitAPI = 1 + progress; //wait API befre next sending rows
@@ -41,7 +43,8 @@ var ask = readline.createInterface({
 findcsv(); //calls the function to find the input csv file
 function findcsv() { //defines the function to find the input csv file
   var find_csv = []; //variable for an array holding the csv files found in the folder searched
-  var folder = fs.readdirSync("./Test/Inputs"); //Pulls input files from input director in the test folder ****************************************************
+  process.chdir('../'); //*****************************************************************************check
+  var folder = fs.readdirSync("./Inputs"); //Pulls input files from input director in the test folder ****************************************************
   for (var doc in folder) {
     if (require('path').extname(folder[doc]) === ".csv") {
       find_csv.push(folder[doc]); //Asigns any csv files in the Input folder to the find_csv array
@@ -70,7 +73,7 @@ function findcsv() { //defines the function to find the input csv file
 
 //Extract data from csv
 function extract(csv) {
-  process.chdir('./Test/Inputs'); //change the process directory to the folder that the input is being pulled from in the prior code ***************
+  process.chdir('./Inputs'); //change the process directory to the folder that the input is being pulled from in the prior code ***************
   var stream = fs.createReadStream(csv,{encoding: 'utf8'});
   var rl = readline.createInterface({input: stream});
   rl.on('line', function(line) {
@@ -115,22 +118,22 @@ function csvtojson(row, waitlist) {
 function cleave(schema, waitlist) {
   var ids = schema.patient["PatientID"];
   var data = schema.patient.inputs;
-  hold(data, waitlist)
+  hold(data, waitlist, ids)
 }
 
 //hold data to get ordered rows returned
-function hold(data, position) {
+function hold(data, position, ids) {
   if (waitAPI === position) {
-    POST(data);
+    POST(data, ids);
   } else {
     setTimeout( function() {
-      hold(data, position);
+      hold(data, position, ids);
     }, 0);
   }
 }
 
 //Setup host and pass data :
-function POST(data) {
+function POST(data, ids) {
   var data = JSON.stringify(data);
   var config = {
     method: 'post',
@@ -143,7 +146,7 @@ function POST(data) {
     };
     axios(config)
     .then(function (response) {
-      jsontocsv(response.data);
+      jsontocsv(response.data, ids);
       waitAPI++;
     })
     .catch(function (error) {
@@ -155,9 +158,17 @@ function POST(data) {
 ////KO is spitting out appropriate results, now convert back in csv.
 
 //Convert json to csv
-function jsontocsv(one) {
-  var one = JSON.stringify(one);
+function jsontocsv(one, ids) {
+  //var one = JSON.stringify(one);
   var csv_c = [];
-  csv_c.push(one);
-  console.log(one);
+  csv_c.push(ids);
+  csv_c.push(one.result.riskOutputs['Integer Risk Score']);
+  csv_c.push(one.result.riskOutputs['One Year Mortality Probability']);
+  csv_c.push(one.result.riskOutputs['Three Year Mortality Probability']);
+  console.log(csv_c);
+
+  //append row to csv
+  process.chdir('../'); //******************************************check
+  process.chdir('./Outputs') //*************************************check
+  fs.appendFileSync(output, csv_c.join() + '\r\n');
 }
